@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Sliding Window ��� Pattern 3</title>
+  <style>
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      background-color: #1a1a1a;
+      border: none;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        background-color: #232629;
+        color: #7a7c7d;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #7a7c7d;  padding-left: 4px; }
+    div.sourceCode
+      { color: #cfcfc2; background-color: #232629; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #cfcfc2; } /* Normal */
+    code span.al { color: #95da4c; background-color: #4d1f24; font-weight: bold; } /* Alert */
+    code span.an { color: #3f8058; } /* Annotation */
+    code span.at { color: #2980b9; } /* Attribute */
+    code span.bn { color: #f67400; } /* BaseN */
+    code span.bu { color: #7f8c8d; } /* BuiltIn */
+    code span.cf { color: #fdbc4b; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #3daee9; } /* Char */
+    code span.cn { color: #27aeae; font-weight: bold; } /* Constant */
+    code span.co { color: #7a7c7d; } /* Comment */
+    code span.cv { color: #7f8c8d; } /* CommentVar */
+    code span.do { color: #a43340; } /* Documentation */
+    code span.dt { color: #2980b9; } /* DataType */
+    code span.dv { color: #f67400; } /* DecVal */
+    code span.er { color: #da4453; text-decoration: underline; } /* Error */
+    code span.ex { color: #0099ff; font-weight: bold; } /* Extension */
+    code span.fl { color: #f67400; } /* Float */
+    code span.fu { color: #8e44ad; } /* Function */
+    code span.im { color: #27ae60; } /* Import */
+    code span.in { color: #c45b00; } /* Information */
+    code span.kw { color: #cfcfc2; font-weight: bold; } /* Keyword */
+    code span.op { color: #cfcfc2; } /* Operator */
+    code span.ot { color: #27ae60; } /* Other */
+    code span.pp { color: #27ae60; } /* Preprocessor */
+    code span.re { color: #2980b9; background-color: #153042; } /* RegionMarker */
+    code span.sc { color: #3daee9; } /* SpecialChar */
+    code span.ss { color: #da4453; } /* SpecialString */
+    code span.st { color: #f44f4f; } /* String */
+    code span.va { color: #27aeae; } /* Variable */
+    code span.vs { color: #da4453; } /* VerbatimString */
+    code span.wa { color: #da4453; } /* Warning */
+  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+  :root { --bg:#f7f6f2; --card:#ffffff; --text:#1d1d1f; --muted:#5f6368; --accent:#c2410c; --border:#e4e1d8; --callout:#fff7ed; --callout-border:#f59e0b; --example:#f1f5f9; color-scheme: light; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#141414; --card:#1d1d1d; --text:#ececec; --muted:#a3a3a3; --accent:#fb923c; --border:#333; --callout:#2a2116; --callout-border:#d97706; --example:#232a33; color-scheme: dark; } }
+  html { background: var(--bg); }
+  body { max-width: 920px; margin: 0 auto; padding: 32px 20px 80px; background: var(--bg); color: var(--text);
+    font: 16px/1.65 "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif; }
+  h1 { font-size: 2rem; line-height: 1.25; margin: 0 0 12px; }
+  h2 { margin-top: 56px; padding: 10px 16px; border-radius: 10px; background: var(--accent); color: #fff; font-size: 1.35rem; }
+  h3 { margin-top: 40px; padding-top: 24px; border-top: 2px solid var(--border); font-size: 1.3rem; }
+  a { color: var(--accent); }
+  blockquote { margin: 16px 0; padding: 12px 16px; background: var(--callout); border-left: 5px solid var(--callout-border); border-radius: 8px; }
+  blockquote p { margin: 0; }
+  table { border-collapse: collapse; width: 100%; font-size: 0.92rem; background: var(--card); border-radius: 10px; overflow: hidden; }
+  th, td { border-bottom: 1px solid var(--border); padding: 8px 10px; text-align: left; vertical-align: top; }
+  th { background: var(--accent); color: #fff; }
+  .table-wrap { overflow-x: auto; }
+  pre { overflow-x: auto; border-radius: 10px; padding: 14px 16px; font-size: 13.5px; line-height: 1.5; }
+  pre.text { background: var(--example); color: var(--text); border: 1px solid var(--border); white-space: pre-wrap; }
+  div.sourceCode { border-radius: 10px; margin: 12px 0; }
+  code { font-family: "Cascadia Code", Consolas, "SFMono-Regular", Menlo, monospace; }
+  p > code, li > code, td > code, blockquote code { background: var(--example); padding: 1px 6px; border-radius: 5px; font-size: 0.9em; }
+  span.changed-line { display: inline-block; min-width: 100%; background: rgba(250, 204, 21, 0.22); box-shadow: inset 4px 0 0 #facc15; }
+  hr { border: none; }
+  col { width: auto !important; }
+  th:first-child, td:first-child { width: 28px; white-space: nowrap; }
+  th:nth-child(3), td:nth-child(3), th:nth-child(4), td:nth-child(4) { white-space: nowrap; }
+  </style>
+</head>
+<body>
+<h1
+id="sliding-window--pattern-3-variable-size-window-shortest--minimum-cover">Sliding
+Window — Pattern 3: Variable-size Window (Shortest / Minimum Cover)</h1>
+<p>Pattern 2 se farak: andar wala <code>while</code> ab window
+<strong>valid</strong> rehne tak chalta hai (valid rehte hue shrink
+karke shortest dhundhte hain), aur UPDATE us <code>while</code> ke
+<strong>andar</strong>, REMOVE se pehle hota hai. <code>bestLen</code>
+<code>INT_MAX</code> se shuru, aur end mein check ki koi valid window
+mili ya nahi. 3297/3298 mein count chahiye, toh shrink ke baad
+<code>count += left</code>. Code mein <code>✏️ changed</code> wali lines
+pichle question ke code se alag hain; baaki sab same. Parameters ke naam
+saare codes mein same rakhe hain (<code>nums</code>, <code>s</code>,
+<code>k</code>, <code>pattern</code>, <code>text</code>); LeetCode pe
+sirf order matter karta hai, naam nahi. 🔒 = LeetCode Premium.</p>
+<ol type="1">
+<li><a href="#1-lc-209--minimum-size-subarray-sum">LC 209 — Minimum Size
+Subarray Sum</a></li>
+<li><a href="#2-lc-2875--minimum-size-subarray-in-infinite-array">LC
+2875 — Minimum Size Subarray in Infinite Array</a></li>
+<li><a
+href="#3-lc-3795--minimum-subarray-length-with-distinct-sum-at-least-k">LC
+3795 — Minimum Subarray Length With Distinct Sum At Least K</a></li>
+<li><a href="#4-lc-2260--minimum-consecutive-cards-to-pick-up">LC 2260 —
+Minimum Consecutive Cards to Pick Up</a></li>
+<li><a
+href="#5-lc-2904--shortest-and-lexicographically-smallest-beautiful-string">LC
+2904 — Shortest and Lexicographically Smallest Beautiful String</a></li>
+<li><a href="#6-lc-1234--replace-the-substring-for-balanced-string">LC
+1234 — Replace the Substring for Balanced String</a></li>
+<li><a href="#7-lc-76--minimum-window-substring">LC 76 — Minimum Window
+Substring</a></li>
+<li><a
+href="#8-lc-3297--count-substrings-that-can-be-rearranged-to-contain-a-string-i">LC
+3297 — Count Substrings That Can Be Rearranged to Contain a String
+I</a></li>
+<li><a
+href="#9-lc-3298--count-substrings-that-can-be-rearranged-to-contain-a-string-ii">LC
+3298 — Count Substrings That Can Be Rearranged to Contain a String
+II</a></li>
+</ol>
+<hr />
+<h2 id="1-lc-209--minimum-size-subarray-sum">1. LC 209 — Minimum Size
+Subarray Sum</h2>
+<p><a
+href="https://leetcode.com/problems/minimum-size-subarray-sum/">Open on
+LeetCode</a></p>
+<p><strong>Problem</strong></p>
+<p>Given an array of positive integers <code>nums</code> and a positive
+integer <code>target</code>, return the minimal length of a subarray
+whose sum is greater than or equal to <code>target</code>. If there is
+no such subarray, return 0.</p>
+<p><strong>Example 1</strong></p>
+<pre class="text"><code>Input:       target = 7, nums = [2,3,1,2,4,3]
+Output:      2
+Explanation: [4,3] sums to 7 and no single element reaches 7.</code></pre>
+<p><strong>Example 2</strong></p>
+<pre class="text"><code>Input:       target = 4, nums = [1,4,4]
+Output:      1
+Explanation: [4] alone reaches 4.</code></pre>
+<p><strong>Example 3</strong></p>
+<pre class="text"><code>Input:       target = 11, nums = [1,1,1,1,1,1,1,1]
+Output:      0
+Explanation: The whole array sums to only 8.</code></pre>
+<p><strong>Constraints:</strong> 1 ≤ target ≤ 10⁹, 1 ≤ nums.length ≤
+10⁵, 1 ≤ nums[i] ≤ 10⁴</p>
+<p><strong>Solution</strong></p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Solution <span class="op">{</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span><span class="op">:</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> minSubArrayLen<span class="op">(</span><span class="dt">int</span> target<span class="op">,</span> vector<span class="op">&lt;</span><span class="dt">int</span><span class="op">&gt;&amp;</span> nums<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>        <span class="dt">int</span> n <span class="op">=</span> nums<span class="op">.</span>size<span class="op">();</span>                         <span class="co">// number of elements</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>        <span class="dt">int</span> left <span class="op">=</span> <span class="dv">0</span><span class="op">,</span> right <span class="op">=</span> <span class="dv">0</span><span class="op">;</span>                     <span class="co">// window is nums[left..right]</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>        <span class="dt">int</span> windowSum <span class="op">=</span> <span class="dv">0</span><span class="op">;</span>                           <span class="co">// sum of the current window (max 10^9, fits in int)</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>        <span class="dt">int</span> bestLen <span class="op">=</span> INT_MAX<span class="op">;</span>                       <span class="co">// shortest valid window seen so far</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>        <span class="cf">while</span> <span class="op">(</span>right <span class="op">&lt;</span> n<span class="op">)</span> <span class="op">{</span>                          <span class="co">// grow the window one element at a time</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>            windowSum <span class="op">+=</span> nums<span class="op">[</span>right<span class="op">];</span>                <span class="co">// ADD: nums[right] enters the window</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>            <span class="cf">while</span> <span class="op">(</span>windowSum <span class="op">&gt;=</span> target<span class="op">)</span> <span class="op">{</span>            <span class="co">// window is valid: try to make it shorter</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>                bestLen <span class="op">=</span> min<span class="op">(</span>bestLen<span class="op">,</span> right <span class="op">-</span> left <span class="op">+</span> <span class="dv">1</span><span class="op">);</span>   <span class="co">// UPDATE: keep the shortest valid window</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>                windowSum <span class="op">-=</span> nums<span class="op">[</span>left<span class="op">];</span>             <span class="co">// REMOVE: nums[left] leaves the window</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>                left<span class="op">++;</span>                              <span class="co">// shrink from the left</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>            right<span class="op">++;</span>                                 <span class="co">// move to the next element</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> bestLen <span class="op">==</span> INT_MAX <span class="op">?</span> <span class="dv">0</span> <span class="op">:</span> bestLen<span class="op">;</span>     <span class="co">// 0 if no window reached target</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span></code></pre></div>
+<p><strong>Time &amp; Space Complexity:</strong> Time O(n):
+<code>right</code> n baar aage badhta hai aur <code>left</code> bhi
+total n baar se zyada nahi, toh har element ek baar aata hai aur ek baar
+jaata hai. Space O(1).</p>
+<hr />
+<h2 id="2-lc-2875--minimum-size-subarray-in-infinite-array">2. LC 2875 —
+Minimum Size Subarray in Infinite Array</h2>
+<p><a
+href="https://leetcode.com/problems/minimum-size-subarray-in-infinite-array/">Open
+on LeetCode</a></p>
+<p><strong>Problem</strong></p>
+<p>You are given an array <code>nums</code> and an integer
+<code>target</code>. Imagine <code>infinite_nums</code>, made by
+repeating <code>nums</code> forever (for [1,2,3] it is
+[1,2,3,1,2,3,1,2,3,…]). Return the length of the shortest subarray of
+<code>infinite_nums</code> whose sum equals <code>target</code>, or −1
+if there is none.</p>
+<p><strong>Example 1</strong></p>
+<pre class="text"><code>Input:       nums = [1,2,3], target = 5
+Output:      2
+Explanation: infinite_nums = [1,2,3,1,2,3,...]; [2,3] at index 1–2 sums to 5.</code></pre>
+<p><strong>Example 2</strong></p>
+<pre class="text"><code>Input:       nums = [1,1,1,2,3], target = 4
+Output:      2
+Explanation: infinite_nums = [1,1,1,2,3,1,1,1,2,3,...]; [3,1] at index 4–5 sums to 4.</code></pre>
+<p><strong>Example 3</strong></p>
+<pre class="text"><code>Input:       nums = [2,4,6,8], target = 3
+Output:      -1
+Explanation: Every number is even, so an odd sum like 3 is impossible.</code></pre>
+<p><strong>Constraints:</strong> 1 ≤ nums.length ≤ 10⁵, 1 ≤ nums[i] ≤
+10⁵, 1 ≤ target ≤ 10⁹</p>
+<p><strong>Solution</strong></p>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Solution <span class="op">{</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span><span class="op">:</span></span>
+<span class="changed-line" id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> minSizeSubarray<span class="op">(</span>vector<span class="op">&lt;</span><span class="dt">int</span><span class="op">&gt;&amp;</span> nums<span class="op">,</span> <span class="dt">int</span> target<span class="op">)</span> <span class="op">{</span>   <span class="co">// ✏️ changed</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>        <span class="dt">int</span> n <span class="op">=</span> nums<span class="op">.</span>size<span class="op">();</span>                         <span class="co">// length of one copy</span></span>
+<span class="changed-line" id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>        <span class="dt">long</span> <span class="dt">long</span> total <span class="op">=</span> <span class="dv">0</span><span class="op">;</span>                         <span class="co">// ✏️ changed | sum of one full copy (can reach 10^10)</span></span>
+<span class="changed-line" id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> x <span class="op">:</span> nums<span class="op">)</span> total <span class="op">+=</span> x<span class="op">;</span>               <span class="co">// ✏️ changed | add up one copy</span></span>
+<span class="changed-line" id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>        <span class="dt">long</span> <span class="dt">long</span> fullCopies <span class="op">=</span> target <span class="op">/</span> total<span class="op">;</span>       <span class="co">// ✏️ changed | whole copies we take for sure</span></span>
+<span class="changed-line" id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>        <span class="dt">long</span> <span class="dt">long</span> rest <span class="op">=</span> target <span class="op">%</span> total<span class="op">;</span>             <span class="co">// ✏️ changed | the part a window still has to make</span></span>
+<span class="changed-line" id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>rest <span class="op">==</span> <span class="dv">0</span><span class="op">)</span> <span class="cf">return</span> fullCopies <span class="op">*</span> n<span class="op">;</span>        <span class="co">// ✏️ changed | only full copies needed</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>        <span class="dt">int</span> left <span class="op">=</span> <span class="dv">0</span><span class="op">,</span> right <span class="op">=</span> <span class="dv">0</span><span class="op">;</span>                     <span class="co">// window is over nums + nums (2n elements)</span></span>
+<span class="changed-line" id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>        <span class="dt">long</span> <span class="dt">long</span> windowSum <span class="op">=</span> <span class="dv">0</span><span class="op">;</span>                     <span class="co">// ✏️ changed | sum of the current window</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>        <span class="dt">int</span> bestLen <span class="op">=</span> INT_MAX<span class="op">;</span>                       <span class="co">// shortest valid window seen so far</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a></span>
+<span class="changed-line" id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>        <span class="cf">while</span> <span class="op">(</span>right <span class="op">&lt;</span> <span class="dv">2</span> <span class="op">*</span> n<span class="op">)</span> <span class="op">{</span>                      <span class="co">// ✏️ changed | two copies are enough for any wrap-around</span></span>
+<span class="changed-line" id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>            windowSum <span class="op">+=</span> nums<span class="op">[</span>right <span class="op">%</span> n<span class="op">];</span>            <span class="co">// ✏️ changed | ADD: nums[right % n] enters the window</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a></span>
+<span class="changed-line" id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>            <span class="cf">while</span> <span class="op">(</span>windowSum <span class="op">&gt;=</span> rest<span class="op">)</span> <span class="op">{</span>              <span class="co">// ✏️ changed | window is valid: try to make it shorter</span></span>
+<span class="changed-line" id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> <span class="op">(</span>windowSum <span class="op">==</span> rest<span class="op">)</span> bestLen <span class="op">=</span> min<span class="op">(</span>bestLen<span class="op">,</span> right <span class="op">-</span> left <span class="op">+</span> <span class="dv">1</span><span class="op">);</span>   <span class="co">// ✏️ changed | UPDATE: exact sum only</span></span>
+<span class="changed-line" id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>                windowSum <span class="op">-=</span> nums<span class="op">[</span>left <span class="op">%</span> n<span class="op">];</span>         <span class="co">// ✏️ changed | REMOVE: nums[left % n] leaves the window</span></span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>                left<span class="op">++;</span>                              <span class="co">// shrink from the left</span></span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span></span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>            right<span class="op">++;</span>                                 <span class="co">// move to the next element</span></span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span class="changed-line" id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> bestLen <span class="op">==</span> INT_MAX <span class="op">?</span> <span class="op">-</span><span class="dv">1</span> <span class="op">:</span> fullCopies <span class="op">*</span> n <span class="op">+</span> bestLen<span class="op">;</span>   <span class="co">// ✏️ changed | full copies + the window</span></span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span></code></pre></div>
+<p><strong>Time &amp; Space Complexity:</strong> Time O(n): window sirf
+2n elements pe chalta hai, <code>right</code> aur <code>left</code> dono
+total 2n baar. Space O(1).</p>
+<hr />
+<h2
+id="3-lc-3795--minimum-subarray-length-with-distinct-sum-at-least-k">3.
+LC 3795 — Minimum Subarray Length With Distinct Sum At Least K</h2>
+<p><a
+href="https://leetcode.com/problems/minimum-subarray-length-with-distinct-sum-at-least-k/">Open
+on LeetCode</a></p>
+<p><strong>Problem</strong></p>
+<p>You are given an integer array <code>nums</code> and an integer
+<code>k</code>. For a subarray, add up its distinct values, counting
+each value only once. Return the minimum length of a subarray whose
+distinct sum is at least <code>k</code>, or −1 if no such subarray
+exists.</p>
+<p><strong>Example 1</strong></p>
+<pre class="text"><code>Input:       nums = [2,2,3,1], k = 4
+Output:      2
+Explanation: [2,3] has distinct values {2, 3}; 2 + 3 = 5 ≥ 4.</code></pre>
+<p><strong>Example 2</strong></p>
+<pre class="text"><code>Input:       nums = [3,2,3,4], k = 5
+Output:      2
+Explanation: [3,2]: 3 + 2 = 5 ≥ 5.</code></pre>
+<p><strong>Example 3</strong></p>
+<pre class="text"><code>Input:       nums = [5,5,4], k = 5
+Output:      1
+Explanation: [5] alone reaches 5.</code></pre>
+<p><strong>Constraints:</strong> 1 ≤ nums.length ≤ 10⁵, 1 ≤ nums[i] ≤
+10⁵, 1 ≤ k ≤ 10⁹</p>
+<p><strong>Solution</strong></p>
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Solution <span class="op">{</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span><span class="op">:</span></span>
+<span class="changed-line" id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> minLength<span class="op">(</span>vector<span class="op">&lt;</span><span class="dt">int</span><span class="op">&gt;&amp;</span> nums<span class="op">,</span> <span class="dt">int</span> k<span class="op">)</span> <span class="op">{</span>   <span class="co">// ✏️ changed</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>        <span class="dt">int</span> n <span class="op">=</span> nums<span class="op">.</span>size<span class="op">();</span>                         <span class="co">// number of elements</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>        <span class="dt">int</span> left <span class="op">=</span> <span class="dv">0</span><span class="op">,</span> right <span class="op">=</span> <span class="dv">0</span><span class="op">;</span>                     <span class="co">// window is nums[left..right]</span></span>
+<span class="changed-line" id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>        unordered_map<span class="op">&lt;</span><span class="dt">int</span><span class="op">,</span> <span class="dt">int</span><span class="op">&gt;</span> freq<span class="op">;</span>                <span class="co">// ✏️ changed | value -&gt; count inside the window</span></span>
+<span class="changed-line" id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>        <span class="dt">long</span> <span class="dt">long</span> distinctSum <span class="op">=</span> <span class="dv">0</span><span class="op">;</span>                   <span class="co">// ✏️ changed | sum of different values in the window (can pass int)</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>        <span class="dt">int</span> bestLen <span class="op">=</span> INT_MAX<span class="op">;</span>                       <span class="co">// shortest valid window seen so far</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a></span>
+<span class="changed-line" id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>        <span class="cf">while</span> <span class="op">(</span>right <span class="op">&lt;</span> n<span class="op">)</span> <span class="op">{</span>                          <span class="co">// ✏️ changed | grow the window one element at a time</span></span>
+<span class="changed-line" id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> <span class="op">(</span>freq<span class="op">[</span>nums<span class="op">[</span>right<span class="op">]]</span> <span class="op">==</span> <span class="dv">0</span><span class="op">)</span> distinctSum <span class="op">+=</span> nums<span class="op">[</span>right<span class="op">];</span>   <span class="co">// ✏️ changed | ADD: a value we did not have yet</span></span>
+<span class="changed-line" id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>            freq<span class="op">[</span>nums<span class="op">[</span>right<span class="op">]]++;</span>                     <span class="co">// ✏️ changed | ADD: count it</span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a></span>
+<span class="changed-line" id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>            <span class="cf">while</span> <span class="op">(</span>distinctSum <span class="op">&gt;=</span> k<span class="op">)</span> <span class="op">{</span>               <span class="co">// ✏️ changed | window is valid: try to make it shorter</span></span>
+<span class="changed-line" id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>                bestLen <span class="op">=</span> min<span class="op">(</span>bestLen<span class="op">,</span> right <span class="op">-</span> left <span class="op">+</span> <span class="dv">1</span><span class="op">);</span>   <span class="co">// ✏️ changed | UPDATE: keep the shortest valid window</span></span>
+<span class="changed-line" id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>                freq<span class="op">[</span>nums<span class="op">[</span>left<span class="op">]]--;</span>                  <span class="co">// ✏️ changed | REMOVE: uncount it</span></span>
+<span class="changed-line" id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> <span class="op">(</span>freq<span class="op">[</span>nums<span class="op">[</span>left<span class="op">]]</span> <span class="op">==</span> <span class="dv">0</span><span class="op">)</span> distinctSum <span class="op">-=</span> nums<span class="op">[</span>left<span class="op">];</span>   <span class="co">// ✏️ changed | REMOVE: that value is gone now</span></span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>                left<span class="op">++;</span>                              <span class="co">// shrink from the left</span></span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span></span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>            right<span class="op">++;</span>                                 <span class="co">// move to the next element</span></span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span class="changed-line" id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> bestLen <span class="op">==</span> INT_MAX <span class="op">?</span> <span class="op">-</span><span class="dv">1</span> <span class="op">:</span> bestLen<span class="op">;</span>    <span class="co">// ✏️ changed | -1 if no window reached k</span></span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span></code></pre></div>
+<p><strong>Time &amp; Space Complexity:</strong> Time O(n) average.
+Space O(n): map se key kabhi hatti nahi.</p>
+<hr />
+<h2 id="4-lc-2260--minimum-consecutive-cards-to-pick-up">4. LC 2260 —
+Minimum Consecutive Cards to Pick Up</h2>
+<p><a
+href="https://leetcode.com/problems/minimum-consecutive-cards-to-pick-up/">Open
+on LeetCode</a></p>
+<p><strong>Problem</strong></p>
+<p>You are given an integer array <code>cards</code> where
+<code>cards[i]</code> is the value of the i-th card. Two cards match if
+they have the same value. Return the minimum number of consecutive cards
+you have to pick up to get a pair of matching cards. If it is
+impossible, return −1.</p>
+<p><strong>Example 1</strong></p>
+<pre class="text"><code>Input:       cards = [3,4,2,3,4,7]
+Output:      4
+Explanation: Pick [3,4,2,3] (the two 3s) or [4,2,3,4] (the two 4s). Nothing shorter has a pair.</code></pre>
+<p><strong>Example 2</strong></p>
+<pre class="text"><code>Input:       cards = [1,0,5,3]
+Output:      -1
+Explanation: All values are different, so no pair exists.</code></pre>
+<p><strong>Constraints:</strong> 1 ≤ cards.length ≤ 10⁵, 0 ≤ cards[i] ≤
+10⁶</p>
+<p><strong>Solution</strong></p>
+<div class="sourceCode" id="cb15"><pre
+class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Solution <span class="op">{</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span><span class="op">:</span></span>
+<span class="changed-line" id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> minimumCardPickup<span class="op">(</span>vector<span class="op">&lt;</span><span class="dt">int</span><span class="op">&gt;&amp;</span> nums<span class="op">)</span> <span class="op">{</span>   <span class="co">// ✏️ changed</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>        <span class="dt">int</span> n <span class="op">=</span> nums<span class="op">.</span>size<span class="op">();</span>                         <span class="co">// number of cards</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>        <span class="dt">int</span> left <span class="op">=</span> <span class="dv">0</span><span class="op">,</span> right <span class="op">=</span> <span class="dv">0</span><span class="op">;</span>                     <span class="co">// window is nums[left..right]</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>        unordered_map<span class="op">&lt;</span><span class="dt">int</span><span class="op">,</span> <span class="dt">int</span><span class="op">&gt;</span> freq<span class="op">;</span>                <span class="co">// value -&gt; count inside the window</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>        <span class="dt">int</span> bestLen <span class="op">=</span> INT_MAX<span class="op">;</span>                       <span class="co">// shortest valid window seen so far</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>        <span class="cf">while</span> <span class="op">(</span>right <span class="op">&lt;</span> n<span class="op">)</span> <span class="op">{</span>                          <span class="co">// grow the window one card at a time</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>            freq<span class="op">[</span>nums<span class="op">[</span>right<span class="op">]]++;</span>                     <span class="co">// ADD: nums[right] enters the window</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a></span>
+<span class="changed-line" id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>            <span class="cf">while</span> <span class="op">(</span>freq<span class="op">[</span>nums<span class="op">[</span>right<span class="op">]]</span> <span class="op">&gt;</span> <span class="dv">1</span><span class="op">)</span> <span class="op">{</span>          <span class="co">// ✏️ changed | window is valid: it has a matching pair</span></span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>                bestLen <span class="op">=</span> min<span class="op">(</span>bestLen<span class="op">,</span> right <span class="op">-</span> left <span class="op">+</span> <span class="dv">1</span><span class="op">);</span>   <span class="co">// UPDATE: keep the shortest valid window</span></span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>                freq<span class="op">[</span>nums<span class="op">[</span>left<span class="op">]]--;</span>                  <span class="co">// REMOVE: nums[left] leaves the window</span></span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>                left<span class="op">++;</span>                              <span class="co">// shrink from the left</span></span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span></span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>            right<span class="op">++;</span>                                 <span class="co">// move to the next card</span></span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> bestLen <span class="op">==</span> INT_MAX <span class="op">?</span> <span class="op">-</span><span class="dv">1</span> <span class="op">:</span> bestLen<span class="op">;</span>    <span class="co">// -1 if no pair exists</span></span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span></code></pre></div>
+<p><strong>Time &amp; Space Complexity:</strong> Time O(n) average.
+Space O(n): map se key kabhi hatti nahi.</p>
+<hr />
+<h2
+id="5-lc-2904--shortest-and-lexicographically-smallest-beautiful-string">5.
+LC 2904 — Shortest and Lexicographically Smallest Beautiful String</h2>
+<p><a
+href="https://leetcode.com/problems/shortest-and-lexicographically-smallest-beautiful-string/">Open
+on LeetCode</a></p>
+<p><strong>Problem</strong></p>
+<p>You are given a binary string <code>s</code> and a positive integer
+<code>k</code>. A substring is beautiful if it has exactly
+<code>k</code> ones. Let len be the length of the shortest beautiful
+substring. Return the lexicographically smallest beautiful substring of
+length len, or an empty string if <code>s</code> has no beautiful
+substring. (Lexicographically smaller: at the first position where two
+strings differ, the one with the smaller character is smaller.)</p>
+<p><strong>Example 1</strong></p>
+<pre class="text"><code>Input:       s = &quot;100011001&quot;, k = 3
+Output:      &quot;11001&quot;
+Explanation: Many substrings have exactly 3 ones; the shortest have length 5, and the smallest of those is &#39;11001&#39;.</code></pre>
+<p><strong>Example 2</strong></p>
+<pre class="text"><code>Input:       s = &quot;1011&quot;, k = 2
+Output:      &quot;11&quot;
+Explanation: &#39;11&#39; is the only length-2 substring with two ones.</code></pre>
+<p><strong>Example 3</strong></p>
+<pre class="text"><code>Input:       s = &quot;000&quot;, k = 1
+Output:      &quot;&quot;
+Explanation: There is no &#39;1&#39; at all.</code></pre>
+<p><strong>Constraints:</strong> 1 ≤ s.length ≤ 100, 1 ≤ k ≤
+s.length</p>
+<p><strong>Solution</strong></p>
+<div class="sourceCode" id="cb19"><pre
+class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Solution <span class="op">{</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span><span class="op">:</span></span>
+<span class="changed-line" id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    string shortestBeautifulSubstring<span class="op">(</span>string s<span class="op">,</span> <span class="dt">int</span> k<span class="op">)</span> <span class="op">{</span>   <span class="co">// ✏️ changed</span></span>
+<span class="changed-line" id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>        <span class="dt">int</span> n <span class="op">=</span> s<span class="op">.</span>size<span class="op">();</span>                            <span class="co">// ✏️ changed | length of the string</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>        <span class="dt">int</span> left <span class="op">=</span> <span class="dv">0</span><span class="op">,</span> right <span class="op">=</span> <span class="dv">0</span><span class="op">;</span>                     <span class="co">// window is s[left..right]</span></span>
+<span class="changed-line" id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>        <span class="dt">int</span> oneCount <span class="op">=</span> <span class="dv">0</span><span class="op">;</span>                            <span class="co">// ✏️ changed | &#39;1&#39;s inside the window</span></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>        <span class="dt">int</span> bestLen <span class="op">=</span> INT_MAX<span class="op">;</span>                       <span class="co">// shortest valid window seen so far</span></span>
+<span class="changed-line" id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>        string best <span class="op">=</span> <span class="st">&quot;&quot;</span><span class="op">;</span>                            <span class="co">// ✏️ changed | the answer substring so far</span></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>        <span class="cf">while</span> <span class="op">(</span>right <span class="op">&lt;</span> n<span class="op">)</span> <span class="op">{</span>                          <span class="co">// grow the window one character at a time</span></span>
+<span class="changed-line" id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> <span class="op">(</span>s<span class="op">[</span>right<span class="op">]</span> <span class="op">==</span> <span class="ch">&#39;1&#39;</span><span class="op">)</span> oneCount<span class="op">++;</span>         <span class="co">// ✏️ changed | ADD: s[right] enters the window</span></span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a></span>
+<span class="changed-line" id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>            <span class="cf">while</span> <span class="op">(</span>oneCount <span class="op">==</span> k<span class="op">)</span> <span class="op">{</span>                  <span class="co">// ✏️ changed | window is valid: exactly k ones, try to make it shorter</span></span>
+<span class="changed-line" id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>                string window <span class="op">=</span> s<span class="op">.</span>substr<span class="op">(</span>left<span class="op">,</span> right <span class="op">-</span> left <span class="op">+</span> <span class="dv">1</span><span class="op">);</span>   <span class="co">// ✏️ changed | the current substring</span></span>
+<span class="changed-line" id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> <span class="op">(</span>right <span class="op">-</span> left <span class="op">+</span> <span class="dv">1</span> <span class="op">&lt;</span> bestLen <span class="op">||</span> <span class="op">(</span>right <span class="op">-</span> left <span class="op">+</span> <span class="dv">1</span> <span class="op">==</span> bestLen <span class="op">&amp;&amp;</span> window <span class="op">&lt;</span> best<span class="op">))</span> <span class="op">{</span>   <span class="co">// ✏️ changed | UPDATE: shorter, or same length but smaller</span></span>
+<span class="changed-line" id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>                    bestLen <span class="op">=</span> right <span class="op">-</span> left <span class="op">+</span> <span class="dv">1</span><span class="op">;</span>      <span class="co">// ✏️ changed | new best length</span></span>
+<span class="changed-line" id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a>                    best <span class="op">=</span> window<span class="op">;</span>                   <span class="co">// ✏️ changed | new best substring</span></span>
+<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a>                <span class="op">}</span></span>
+<span class="changed-line" id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> <span class="op">(</span>s<span class="op">[</span>left<span class="op">]</span> <span class="op">==</span> <span class="ch">&#39;1&#39;</span><span class="op">)</span> oneCount<span class="op">--;</span>      <span class="co">// ✏️ changed | REMOVE: s[left] leaves the window</span></span>
+<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a>                left<span class="op">++;</span>                              <span class="co">// shrink from the left</span></span>
+<span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span></span>
+<span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a>            right<span class="op">++;</span>                                 <span class="co">// move to the next character</span></span>
+<span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span class="changed-line" id="cb19-24"><a href="#cb19-24" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> best<span class="op">;</span>                                 <span class="co">// ✏️ changed | &quot;&quot; if no window has k ones</span></span>
+<span id="cb19-25"><a href="#cb19-25" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb19-26"><a href="#cb19-26" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span></code></pre></div>
+<p><strong>Time &amp; Space Complexity:</strong> Time O(n²) worst case:
+har UPDATE pe <code>substr</code> aur string compare O(n), aur n ≤ 100.
+Space O(n).</p>
+<hr />
+<h2 id="6-lc-1234--replace-the-substring-for-balanced-string">6. LC 1234
+— Replace the Substring for Balanced String</h2>
+<p><a
+href="https://leetcode.com/problems/replace-the-substring-for-balanced-string/">Open
+on LeetCode</a></p>
+<p><strong>Problem</strong></p>
+<p>You are given a string <code>s</code> of length n containing only
+‘Q’, ‘W’, ‘E’ and ‘R’ (n is a multiple of 4). The string is balanced if
+each of the four characters appears exactly n/4 times. Return the
+minimum length of a substring that you can replace with any other string
+of the same length to make <code>s</code> balanced. If <code>s</code> is
+already balanced, return 0.</p>
+<p><strong>Example 1</strong></p>
+<pre class="text"><code>Input:       s = &quot;QWER&quot;
+Output:      0
+Explanation: Already balanced.</code></pre>
+<p><strong>Example 2</strong></p>
+<pre class="text"><code>Input:       s = &quot;QQWE&quot;
+Output:      1
+Explanation: Replace one &#39;Q&#39; with &#39;R&#39;: &#39;RQWE&#39;.</code></pre>
+<p><strong>Example 3</strong></p>
+<pre class="text"><code>Input:       s = &quot;QQQW&quot;
+Output:      2
+Explanation: Replace the first &#39;QQ&#39; with &#39;ER&#39;: &#39;ERQW&#39;.</code></pre>
+<p><strong>Constraints:</strong> n == s.length, 4 ≤ n ≤ 10⁵, n is a
+multiple of 4, s contains only ‘Q’, ‘W’, ‘E’ and ‘R’</p>
+<p><strong>Solution</strong></p>
+<div class="sourceCode" id="cb23"><pre
+class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Solution <span class="op">{</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span><span class="op">:</span></span>
+<span class="changed-line" id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> balancedString<span class="op">(</span>string s<span class="op">)</span> <span class="op">{</span>   <span class="co">// ✏️ changed</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>        <span class="dt">int</span> n <span class="op">=</span> s<span class="op">.</span>size<span class="op">();</span>                            <span class="co">// length of the string</span></span>
+<span class="changed-line" id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>        <span class="dt">int</span> need <span class="op">=</span> n <span class="op">/</span> <span class="dv">4</span><span class="op">;</span>                            <span class="co">// ✏️ changed | every letter must appear exactly n/4 times</span></span>
+<span class="changed-line" id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>        vector<span class="op">&lt;</span><span class="dt">int</span><span class="op">&gt;</span> outside<span class="op">(</span><span class="dv">128</span><span class="op">,</span> <span class="dv">0</span><span class="op">);</span>                 <span class="co">// ✏️ changed | letter -&gt; count OUTSIDE the window</span></span>
+<span class="changed-line" id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> <span class="op">(</span><span class="dt">char</span> c <span class="op">:</span> s<span class="op">)</span> outside<span class="op">[</span>c<span class="op">]++;</span>               <span class="co">// ✏️ changed | at the start everything is outside</span></span>
+<span class="changed-line" id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>outside<span class="op">[</span><span class="ch">&#39;Q&#39;</span><span class="op">]</span> <span class="op">==</span> need <span class="op">&amp;&amp;</span> outside<span class="op">[</span><span class="ch">&#39;W&#39;</span><span class="op">]</span> <span class="op">==</span> need <span class="op">&amp;&amp;</span> outside<span class="op">[</span><span class="ch">&#39;E&#39;</span><span class="op">]</span> <span class="op">==</span> need <span class="op">&amp;&amp;</span> outside<span class="op">[</span><span class="ch">&#39;R&#39;</span><span class="op">]</span> <span class="op">==</span> need<span class="op">)</span> <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span>   <span class="co">// ✏️ changed | already balanced</span></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>        <span class="dt">int</span> left <span class="op">=</span> <span class="dv">0</span><span class="op">,</span> right <span class="op">=</span> <span class="dv">0</span><span class="op">;</span>                     <span class="co">// window is s[left..right] (the part we replace)</span></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>        <span class="dt">int</span> bestLen <span class="op">=</span> INT_MAX<span class="op">;</span>                       <span class="co">// shortest valid window seen so far</span></span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">while</span> <span class="op">(</span>right <span class="op">&lt;</span> n<span class="op">)</span> <span class="op">{</span>                          <span class="co">// grow the window one character at a time</span></span>
+<span class="changed-line" id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a>            outside<span class="op">[</span>s<span class="op">[</span>right<span class="op">]]--;</span>                     <span class="co">// ✏️ changed | ADD: s[right] moves into the window</span></span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a></span>
+<span class="changed-line" id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a>            <span class="cf">while</span> <span class="op">(</span>outside<span class="op">[</span><span class="ch">&#39;Q&#39;</span><span class="op">]</span> <span class="op">&lt;=</span> need <span class="op">&amp;&amp;</span> outside<span class="op">[</span><span class="ch">&#39;W&#39;</span><span class="op">]</span> <span class="op">&lt;=</span> need <span class="op">&amp;&amp;</span> outside<span class="op">[</span><span class="ch">&#39;E&#39;</span><span class="op">]</span> <span class="op">&lt;=</span> need <span class="op">&amp;&amp;</span> outside<span class="op">[</span><span class="ch">&#39;R&#39;</span><span class="op">]</span> <span class="op">&lt;=</span> need<span class="op">)</span> <span class="op">{</span>   <span class="co">// ✏️ changed | window is valid: rewriting it can fix the rest</span></span>
+<span class="changed-line" id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a>                bestLen <span class="op">=</span> min<span class="op">(</span>bestLen<span class="op">,</span> right <span class="op">-</span> left <span class="op">+</span> <span class="dv">1</span><span class="op">);</span>   <span class="co">// ✏️ changed | UPDATE: keep the shortest valid window</span></span>
+<span class="changed-line" id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a>                outside<span class="op">[</span>s<span class="op">[</span>left<span class="op">]]++;</span>                  <span class="co">// ✏️ changed | REMOVE: s[left] goes back outside</span></span>
+<span id="cb23-18"><a href="#cb23-18" aria-hidden="true" tabindex="-1"></a>                left<span class="op">++;</span>                              <span class="co">// shrink from the left</span></span>
+<span id="cb23-19"><a href="#cb23-19" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span></span>
+<span id="cb23-20"><a href="#cb23-20" aria-hidden="true" tabindex="-1"></a>            right<span class="op">++;</span>                                 <span class="co">// move to the next character</span></span>
+<span id="cb23-21"><a href="#cb23-21" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span class="changed-line" id="cb23-22"><a href="#cb23-22" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> bestLen<span class="op">;</span>                              <span class="co">// ✏️ changed | shortest substring to replace</span></span>
+<span id="cb23-23"><a href="#cb23-23" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb23-24"><a href="#cb23-24" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span></code></pre></div>
+<p><strong>Time &amp; Space Complexity:</strong> Time O(n). Space O(1)
+(128 size ka array).</p>
+<hr />
+<h2 id="7-lc-76--minimum-window-substring">7. LC 76 — Minimum Window
+Substring</h2>
+<p><a
+href="https://leetcode.com/problems/minimum-window-substring/">Open on
+LeetCode</a></p>
+<p><strong>Problem</strong></p>
+<p>Given strings <code>s</code> and <code>t</code>, return the shortest
+substring of <code>s</code> that contains every character of
+<code>t</code>, including duplicates. If there is none, return the empty
+string. The answer is guaranteed to be unique.</p>
+<p><strong>Example 1</strong></p>
+<pre class="text"><code>Input:       s = &quot;ADOBECODEBANC&quot;, t = &quot;ABC&quot;
+Output:      &quot;BANC&quot;
+Explanation: &#39;BANC&#39; has A, B and C, and no shorter substring does.</code></pre>
+<p><strong>Example 2</strong></p>
+<pre class="text"><code>Input:       s = &quot;a&quot;, t = &quot;a&quot;
+Output:      &quot;a&quot;
+Explanation: The whole string.</code></pre>
+<p><strong>Example 3</strong></p>
+<pre class="text"><code>Input:       s = &quot;a&quot;, t = &quot;aa&quot;
+Output:      &quot;&quot;
+Explanation: t needs two &#39;a&#39;, but s has only one.</code></pre>
+<p><strong>Constraints:</strong> m == s.length, n == t.length, 1 ≤ m, n
+≤ 10⁵, s and t are uppercase and lowercase English letters</p>
+<p><strong>Solution</strong></p>
+<div class="sourceCode" id="cb27"><pre
+class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Solution <span class="op">{</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span><span class="op">:</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>    string minWindow<span class="op">(</span>string s<span class="op">,</span> string t<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span><span class="op">(</span>s<span class="op">.</span>size<span class="op">()</span> <span class="op">&lt;</span> t<span class="op">.</span>size<span class="op">())</span><span class="cf">return</span> <span class="st">&quot;&quot;</span><span class="op">;</span> <span class="co">//include this two base cases</span></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span><span class="op">(</span>s <span class="op">==</span> t<span class="op">)</span> <span class="cf">return</span> s<span class="op">;</span></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>        unordered_map<span class="op">&lt;</span><span class="dt">char</span><span class="op">,</span> <span class="dt">int</span><span class="op">&gt;</span>mp<span class="op">;</span></span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span><span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> t<span class="op">.</span>size<span class="op">();</span> i<span class="op">++){</span></span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>            mp<span class="op">[</span>t<span class="op">[</span>i<span class="op">]]++;</span></span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>        <span class="dt">int</span> r <span class="op">=</span> <span class="dv">0</span><span class="op">,</span> l <span class="op">=</span> <span class="dv">0</span><span class="op">,</span> cnt<span class="op">=</span> <span class="dv">0</span><span class="op">,</span> minlen <span class="op">=</span> INT_MAX<span class="op">,</span> ind <span class="op">=</span> <span class="op">-</span><span class="dv">1</span><span class="op">;</span></span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">while</span><span class="op">(</span>r <span class="op">&lt;</span> s<span class="op">.</span>size<span class="op">()){</span></span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span><span class="op">(</span>mp<span class="op">[</span>s<span class="op">[</span>r<span class="op">]]</span> <span class="op">&gt;</span> <span class="dv">0</span><span class="op">){</span></span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>                cnt<span class="op">++;</span></span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span></span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a>            mp<span class="op">[</span>s<span class="op">[</span>r<span class="op">]]--;</span></span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a>            <span class="cf">while</span><span class="op">(</span>cnt <span class="op">==</span> t<span class="op">.</span>size<span class="op">()</span> <span class="op">&amp;&amp;</span> l <span class="op">&lt;=</span> r<span class="op">){</span></span>
+<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span><span class="op">(</span>r<span class="op">-</span>l<span class="op">+</span><span class="dv">1</span> <span class="op">&lt;</span> minlen<span class="op">){</span></span>
+<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a>                    minlen <span class="op">=</span> r<span class="op">-</span>l<span class="op">+</span><span class="dv">1</span><span class="op">;</span></span>
+<span id="cb27-19"><a href="#cb27-19" aria-hidden="true" tabindex="-1"></a>                    ind <span class="op">=</span> l<span class="op">;</span></span>
+<span id="cb27-20"><a href="#cb27-20" aria-hidden="true" tabindex="-1"></a>                <span class="op">}</span></span>
+<span id="cb27-21"><a href="#cb27-21" aria-hidden="true" tabindex="-1"></a>                mp<span class="op">[</span>s<span class="op">[</span>l<span class="op">]]++;</span></span>
+<span id="cb27-22"><a href="#cb27-22" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span><span class="op">(</span>mp<span class="op">[</span>s<span class="op">[</span>l<span class="op">]]</span> <span class="op">&gt;</span> <span class="dv">0</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb27-23"><a href="#cb27-23" aria-hidden="true" tabindex="-1"></a>                    cnt<span class="op">--;</span></span>
+<span id="cb27-24"><a href="#cb27-24" aria-hidden="true" tabindex="-1"></a>                <span class="op">}</span></span>
+<span id="cb27-25"><a href="#cb27-25" aria-hidden="true" tabindex="-1"></a>                l<span class="op">++;</span></span>
+<span id="cb27-26"><a href="#cb27-26" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span></span>
+<span id="cb27-27"><a href="#cb27-27" aria-hidden="true" tabindex="-1"></a>            r<span class="op">++;</span></span>
+<span id="cb27-28"><a href="#cb27-28" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb27-29"><a href="#cb27-29" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span><span class="op">(</span>ind <span class="op">==</span> <span class="op">-</span><span class="dv">1</span><span class="op">)</span><span class="cf">return</span> <span class="st">&quot;&quot;</span><span class="op">;</span></span>
+<span id="cb27-30"><a href="#cb27-30" aria-hidden="true" tabindex="-1"></a>        string str <span class="op">=</span> s<span class="op">.</span>substr<span class="op">(</span>ind<span class="op">,</span> minlen<span class="op">);</span></span>
+<span id="cb27-31"><a href="#cb27-31" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> str<span class="op">;</span></span>
+<span id="cb27-32"><a href="#cb27-32" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb27-33"><a href="#cb27-33" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span></code></pre></div>
+<p><strong>Time &amp; Space Complexity:</strong> Time O(m + n):
+<code>r</code> aur <code>l</code> dono total m baar aage badhte hain,
+aur t ko ek baar ginna. Space O(1): map mein max 52 letters (A–Z,
+a–z).</p>
+<hr />
+<h2
+id="8-lc-3297--count-substrings-that-can-be-rearranged-to-contain-a-string-i">8.
+LC 3297 — Count Substrings That Can Be Rearranged to Contain a String
+I</h2>
+<p><a
+href="https://leetcode.com/problems/count-substrings-that-can-be-rearranged-to-contain-a-string-i/">Open
+on LeetCode</a></p>
+<p><strong>Problem</strong></p>
+<p>You are given two strings <code>word1</code> and <code>word2</code>.
+A string x is valid if it can be rearranged so that <code>word2</code>
+is a prefix of it, which means x contains every letter of
+<code>word2</code> at least as many times. Return the number of valid
+substrings of <code>word1</code>.</p>
+<p><strong>Example 1</strong></p>
+<pre class="text"><code>Input:       word1 = &quot;bcca&quot;, word2 = &quot;abc&quot;
+Output:      1
+Explanation: Only &#39;bcca&#39; works: it rearranges to &#39;abcc&#39;, which starts with &#39;abc&#39;.</code></pre>
+<p><strong>Example 2</strong></p>
+<pre class="text"><code>Input:       word1 = &quot;abcabc&quot;, word2 = &quot;abc&quot;
+Output:      10
+Explanation: Every substring of length 3 or more has a, b and c: 4 + 3 + 2 + 1 = 10.</code></pre>
+<p><strong>Example 3</strong></p>
+<pre class="text"><code>Input:       word1 = &quot;abcabc&quot;, word2 = &quot;aaabc&quot;
+Output:      0
+Explanation: &#39;aaabc&#39; needs three &#39;a&#39;, but word1 has only two.</code></pre>
+<p><strong>Constraints:</strong> 1 ≤ word1.length ≤ 10⁵, 1 ≤
+word2.length ≤ 10⁴, word1 and word2 are lowercase letters</p>
+<p><strong>Solution</strong></p>
+<div class="sourceCode" id="cb31"><pre
+class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Solution <span class="op">{</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span><span class="op">:</span></span>
+<span class="changed-line" id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">long</span> <span class="dt">long</span> validSubstringCount<span class="op">(</span>string s<span class="op">,</span> string t<span class="op">)</span> <span class="op">{</span>   <span class="co">// ✏️ changed</span></span>
+<span class="changed-line" id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span><span class="op">(</span>s<span class="op">.</span>size<span class="op">()</span> <span class="op">&lt;</span> t<span class="op">.</span>size<span class="op">())</span><span class="cf">return</span> <span class="dv">0</span><span class="op">;</span> <span class="co">// ✏️ changed | shorter s cannot contain t</span></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>        unordered_map<span class="op">&lt;</span><span class="dt">char</span><span class="op">,</span> <span class="dt">int</span><span class="op">&gt;</span>mp<span class="op">;</span></span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span><span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> t<span class="op">.</span>size<span class="op">();</span> i<span class="op">++){</span></span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>            mp<span class="op">[</span>t<span class="op">[</span>i<span class="op">]]++;</span></span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span class="changed-line" id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>        <span class="dt">int</span> r <span class="op">=</span> <span class="dv">0</span><span class="op">,</span> l <span class="op">=</span> <span class="dv">0</span><span class="op">,</span> cnt<span class="op">=</span> <span class="dv">0</span><span class="op">;</span>   <span class="co">// ✏️ changed</span></span>
+<span class="changed-line" id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>        <span class="dt">long</span> <span class="dt">long</span> ans <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> <span class="co">// ✏️ changed | number of valid substrings (can pass int)</span></span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">while</span><span class="op">(</span>r <span class="op">&lt;</span> s<span class="op">.</span>size<span class="op">()){</span></span>
+<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span><span class="op">(</span>mp<span class="op">[</span>s<span class="op">[</span>r<span class="op">]]</span> <span class="op">&gt;</span> <span class="dv">0</span><span class="op">){</span></span>
+<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a>                cnt<span class="op">++;</span></span>
+<span id="cb31-14"><a href="#cb31-14" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span></span>
+<span id="cb31-15"><a href="#cb31-15" aria-hidden="true" tabindex="-1"></a>            mp<span class="op">[</span>s<span class="op">[</span>r<span class="op">]]--;</span></span>
+<span id="cb31-16"><a href="#cb31-16" aria-hidden="true" tabindex="-1"></a>            <span class="cf">while</span><span class="op">(</span>cnt <span class="op">==</span> t<span class="op">.</span>size<span class="op">()</span> <span class="op">&amp;&amp;</span> l <span class="op">&lt;=</span> r<span class="op">){</span></span>
+<span id="cb31-17"><a href="#cb31-17" aria-hidden="true" tabindex="-1"></a>                mp<span class="op">[</span>s<span class="op">[</span>l<span class="op">]]++;</span></span>
+<span id="cb31-18"><a href="#cb31-18" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span><span class="op">(</span>mp<span class="op">[</span>s<span class="op">[</span>l<span class="op">]]</span> <span class="op">&gt;</span> <span class="dv">0</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb31-19"><a href="#cb31-19" aria-hidden="true" tabindex="-1"></a>                    cnt<span class="op">--;</span></span>
+<span id="cb31-20"><a href="#cb31-20" aria-hidden="true" tabindex="-1"></a>                <span class="op">}</span></span>
+<span id="cb31-21"><a href="#cb31-21" aria-hidden="true" tabindex="-1"></a>                l<span class="op">++;</span></span>
+<span id="cb31-22"><a href="#cb31-22" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span></span>
+<span class="changed-line" id="cb31-23"><a href="#cb31-23" aria-hidden="true" tabindex="-1"></a>            ans <span class="op">+=</span> l<span class="op">;</span> <span class="co">// ✏️ changed | starts 0..l-1 all give a valid substring ending at r</span></span>
+<span id="cb31-24"><a href="#cb31-24" aria-hidden="true" tabindex="-1"></a>            r<span class="op">++;</span></span>
+<span id="cb31-25"><a href="#cb31-25" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span class="changed-line" id="cb31-26"><a href="#cb31-26" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> ans<span class="op">;</span>   <span class="co">// ✏️ changed</span></span>
+<span id="cb31-27"><a href="#cb31-27" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb31-28"><a href="#cb31-28" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span></code></pre></div>
+<p><strong>Time &amp; Space Complexity:</strong> Time O(m + n):
+<code>r</code> aur <code>l</code> dono total m baar aage badhte hain.
+Space O(1): map mein max 26 letters. Answer m²/2 tak ja sakta hai,
+isliye <code>long long</code>.</p>
+<hr />
+<h2
+id="9-lc-3298--count-substrings-that-can-be-rearranged-to-contain-a-string-ii">9.
+LC 3298 — Count Substrings That Can Be Rearranged to Contain a String
+II</h2>
+<p><a
+href="https://leetcode.com/problems/count-substrings-that-can-be-rearranged-to-contain-a-string-ii/">Open
+on LeetCode</a></p>
+<p><strong>Problem</strong></p>
+<p>Same as 3297: count the substrings of <code>word1</code> that contain
+every letter of <code>word2</code> at least as many times. Here
+<code>word1</code> can be much longer, and the memory limit is smaller
+than usual, so the solution must run in linear time.</p>
+<p><strong>Example 1</strong></p>
+<pre class="text"><code>Input:       word1 = &quot;bcca&quot;, word2 = &quot;abc&quot;
+Output:      1
+Explanation: Only &#39;bcca&#39; works.</code></pre>
+<p><strong>Example 2</strong></p>
+<pre class="text"><code>Input:       word1 = &quot;abcabc&quot;, word2 = &quot;abc&quot;
+Output:      10
+Explanation: Every substring of length 3 or more works.</code></pre>
+<p><strong>Example 3</strong></p>
+<pre class="text"><code>Input:       word1 = &quot;abcabc&quot;, word2 = &quot;aaabc&quot;
+Output:      0
+Explanation: word1 has only two &#39;a&#39;.</code></pre>
+<p><strong>Constraints:</strong> 1 ≤ word1.length ≤ 10⁶, 1 ≤
+word2.length ≤ 10⁴, word1 and word2 are lowercase letters</p>
+<p><strong>Solution</strong></p>
+<div class="sourceCode" id="cb35"><pre
+class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Solution <span class="op">{</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span><span class="op">:</span></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">long</span> <span class="dt">long</span> validSubstringCount<span class="op">(</span>string s<span class="op">,</span> string t<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span><span class="op">(</span>s<span class="op">.</span>size<span class="op">()</span> <span class="op">&lt;</span> t<span class="op">.</span>size<span class="op">())</span><span class="cf">return</span> <span class="dv">0</span><span class="op">;</span> <span class="co">// shorter s cannot contain t</span></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>        unordered_map<span class="op">&lt;</span><span class="dt">char</span><span class="op">,</span> <span class="dt">int</span><span class="op">&gt;</span>mp<span class="op">;</span></span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span><span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> t<span class="op">.</span>size<span class="op">();</span> i<span class="op">++){</span></span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>            mp<span class="op">[</span>t<span class="op">[</span>i<span class="op">]]++;</span></span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>        <span class="dt">int</span> r <span class="op">=</span> <span class="dv">0</span><span class="op">,</span> l <span class="op">=</span> <span class="dv">0</span><span class="op">,</span> cnt<span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>        <span class="dt">long</span> <span class="dt">long</span> ans <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> <span class="co">// number of valid substrings (can pass int)</span></span>
+<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">while</span><span class="op">(</span>r <span class="op">&lt;</span> s<span class="op">.</span>size<span class="op">()){</span></span>
+<span id="cb35-12"><a href="#cb35-12" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span><span class="op">(</span>mp<span class="op">[</span>s<span class="op">[</span>r<span class="op">]]</span> <span class="op">&gt;</span> <span class="dv">0</span><span class="op">){</span></span>
+<span id="cb35-13"><a href="#cb35-13" aria-hidden="true" tabindex="-1"></a>                cnt<span class="op">++;</span></span>
+<span id="cb35-14"><a href="#cb35-14" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span></span>
+<span id="cb35-15"><a href="#cb35-15" aria-hidden="true" tabindex="-1"></a>            mp<span class="op">[</span>s<span class="op">[</span>r<span class="op">]]--;</span></span>
+<span id="cb35-16"><a href="#cb35-16" aria-hidden="true" tabindex="-1"></a>            <span class="cf">while</span><span class="op">(</span>cnt <span class="op">==</span> t<span class="op">.</span>size<span class="op">()</span> <span class="op">&amp;&amp;</span> l <span class="op">&lt;=</span> r<span class="op">){</span></span>
+<span id="cb35-17"><a href="#cb35-17" aria-hidden="true" tabindex="-1"></a>                mp<span class="op">[</span>s<span class="op">[</span>l<span class="op">]]++;</span></span>
+<span id="cb35-18"><a href="#cb35-18" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span><span class="op">(</span>mp<span class="op">[</span>s<span class="op">[</span>l<span class="op">]]</span> <span class="op">&gt;</span> <span class="dv">0</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb35-19"><a href="#cb35-19" aria-hidden="true" tabindex="-1"></a>                    cnt<span class="op">--;</span></span>
+<span id="cb35-20"><a href="#cb35-20" aria-hidden="true" tabindex="-1"></a>                <span class="op">}</span></span>
+<span id="cb35-21"><a href="#cb35-21" aria-hidden="true" tabindex="-1"></a>                l<span class="op">++;</span></span>
+<span id="cb35-22"><a href="#cb35-22" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span></span>
+<span id="cb35-23"><a href="#cb35-23" aria-hidden="true" tabindex="-1"></a>            ans <span class="op">+=</span> l<span class="op">;</span> <span class="co">// starts 0..l-1 all give a valid substring ending at r</span></span>
+<span id="cb35-24"><a href="#cb35-24" aria-hidden="true" tabindex="-1"></a>            r<span class="op">++;</span></span>
+<span id="cb35-25"><a href="#cb35-25" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb35-26"><a href="#cb35-26" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> ans<span class="op">;</span></span>
+<span id="cb35-27"><a href="#cb35-27" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb35-28"><a href="#cb35-28" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span></code></pre></div>
+<p><strong>Time &amp; Space Complexity:</strong> Time O(m + n), Space
+O(1): 3297 wala code hi, kyunki woh already linear hai; word1 10⁶ tak
+hone pe bhi chalega. Aur speed chahiye toh
+<code>unordered_map&lt;char, int&gt;</code> ki jagah
+<code>vector&lt;int&gt; mp(128, 0)</code> kar do, baaki code same.</p>
+<hr />
+</body>
+</html>
